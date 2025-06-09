@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/DogFoodCalculator/static/css/main.7735b415.css",
+    "main.js": "/DogFoodCalculator/static/js/main.b5c1dcb4.js",
+    "static/js/584.6cee9a44.chunk.js": "/DogFoodCalculator/static/js/584.6cee9a44.chunk.js",
+    "service-worker.js": "/DogFoodCalculator/service-worker.js",
+    "index.html": "/DogFoodCalculator/index.html",
+    "main.7735b415.css.map": "/DogFoodCalculator/static/css/main.7735b415.css.map",
+    "main.b5c1dcb4.js.map": "/DogFoodCalculator/static/js/main.b5c1dcb4.js.map",
+    "584.6cee9a44.chunk.js.map": "/DogFoodCalculator/static/js/584.6cee9a44.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.7735b415.css",
+    "static/js/main.b5c1dcb4.js"
+  ]
+}
