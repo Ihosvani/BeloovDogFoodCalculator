@@ -89,7 +89,7 @@ function App() {
   const packsPerWeek = daily > 0 ? Math.ceil(weekly / packSize) : 0;
 
   const whatsappText = () => {
-    return lang == 'en' ? `Hi! Mi dog ${dogName}  weights ${weight} lbs, he is ${age} month old, and he needs ${daily}g of food per day.` : `¡Hola! Mi perro ${dogName} pesa ${weight} lbs, tiene ${age} meses, y necesita ${daily}g de comida al día.`;
+    return lang == 'en' ? `Hi! Mi dog ${dogName}  weights ${weight} lbs, he is ${age} month old, and he needs ${daily}g of Beloov food per day.` : `¡Hola! Mi perro ${dogName} pesa ${weight} lbs, tiene ${age} meses, y necesita ${daily}g de comida Beloov al día.`;
   }
   const handleInput = (setter) => (e) => {
     setter(e.target.value);
