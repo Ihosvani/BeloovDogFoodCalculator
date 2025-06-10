@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import calculateDailyRation from './calculateDailyRation';
 import './App.css';
 
 const translations = {
@@ -48,21 +49,21 @@ function calculateRacion(weight, age, activity, overweight) {
   // All calculations in grams, weight in lbs
   if (!weight || !age) return 0;
   if (age < 2) return 0; // Too young
-  if (age < 4) return weight * 50;
-  if (age < 6) return weight * 40;
-  if (age < 8) return weight * 30;
-  if (age < 10) return weight * 20;
-  if (age < 12) return weight * 15;
+  if (age < 4) return calculateDailyRation(weight, 50); // 50g for puppies
+  if (age < 6) return calculateDailyRation(weight, 40);
+  if (age < 8) return calculateDailyRation(weight, 30);
+  if (age < 10) return calculateDailyRation(weight, 20);
+  if (age < 12) return calculateDailyRation(weight, 15);
   if (age < 85) {
-    if (overweight) return weight * 10;
-    if (activity === 'low') return weight * 10;
-    if (activity === 'medium') return (weight / 2) * 25;
-    if (activity === 'high') return weight * 15;
+    if (overweight) return calculateDailyRation(weight, 10);
+    if (activity === 'low') return calculateDailyRation(weight, 10);
+    if (activity === 'medium') return calculateDailyRation(weight, 12.5);
+    if (activity === 'high') return calculateDailyRation(weight, 15);
   }
   // 7+ years
-  if (activity === 'low') return weight * 10;
-  if (activity === 'medium') return weight * 11;
-  return weight * 10;
+  if (activity === 'low') return calculateDailyRation(weight, 10);
+  if (activity === 'medium') return calculateDailyRation(weight, 11);
+  return calculateDailyRation(weight, 10);
 }
 
 function App() {
@@ -102,8 +103,10 @@ function App() {
         {t.language}
       </button>
       <div className="calculator-card">
-      <img className='logo' src='VITA.jpg' alt="Vita" />
-
+        <div className="animation-container">
+          <img className="animation" src="dog_animation.gif" alt="Animation" />
+          <img className="logo" src="BELOOV.png" alt="Vita" />
+        </div>
         <h2>{t.title}</h2>
         <label htmlFor="dogName">{t.dogName} *</label>
         <input
