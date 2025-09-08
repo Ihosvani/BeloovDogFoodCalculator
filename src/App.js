@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import calculateDailyRation from './calculateDailyRation';
+import data from './rations.json';
 import './App.css';
 
 const translations = {
@@ -21,7 +21,7 @@ const translations = {
     whatsapp: 'Send via WhatsApp',
     language: 'Español',
     required: 'Required',
-    inputError: 'Please enter valid values for weight and age.'
+  inputError: 'Please select valid ranges.'
   },
   es: {
     title: 'Calculadora de Comida para Perros',
@@ -41,29 +41,34 @@ const translations = {
     whatsapp: 'Enviar por WhatsApp',
     language: 'English',
     required: 'Requerido',
-    inputError: 'Por favor, ingrese valores válidos para peso y edad.'
+    inputError: 'Por favor, seleccione rangos válidos.'
   }
 };
+translations.en.ageRange = 'Age Range';
+translations.en.weightRange = 'Weight Range (lbs)';
+translations.es.ageRange = 'Rango de edad';
+translations.es.weightRange = 'Rango de peso (lbs)';
 const logo = './public/VITA.jpg';
-function calculateRacion(weight, age, activity, overweight) {
-  // All calculations in grams, weight in lbs
-  if (!weight || !age) return 0;
-  if (age < 2) return 0; // Too young
-  if (age < 4) return calculateDailyRation(weight, 50); // 50g for puppies
-  if (age < 6) return calculateDailyRation(weight, 40);
-  if (age < 8) return calculateDailyRation(weight, 30);
-  if (age < 10) return calculateDailyRation(weight, 20);
-  if (age < 12) return calculateDailyRation(weight, 15);
-  if (age < 85) {
-    if (overweight) return calculateDailyRation(weight, 10);
-    if (activity === 'low') return calculateDailyRation(weight, 10);
-    if (activity === 'medium') return calculateDailyRation(weight, 12.5);
-    if (activity === 'high') return calculateDailyRation(weight, 15);
+
+function formatWeightRange(range) { return `${range.min}-${range.max}`; }
+const weightIndexMap = {};
+data.weightRanges.forEach((r, i) => { weightIndexMap[formatWeightRange(r)] = i; });
+
+function getDailyRation(ageGroup, weightRangeLabel, activity, overweight) {
+  if (!ageGroup || !weightRangeLabel) return 0;
+  const idx = weightIndexMap[weightRangeLabel];
+  if (idx == null) return 0;
+  if (data.puppy[ageGroup]) { return data.puppy[ageGroup][idx] || 0; }
+  if (ageGroup === 'adult') {
+    if (overweight) return data.adult.overweight[idx] || 0;
+    const arr = data.adult.normal[activity] || data.adult.normal.medium;
+    return arr[idx] || 0;
   }
-  // 7+ years
-  if (activity === 'low') return calculateDailyRation(weight, 10);
-  if (activity === 'medium') return calculateDailyRation(weight, 11);
-  return calculateDailyRation(weight, 10);
+  if (ageGroup === 'senior') {
+    if (activity === 'medium') return data.senior.medium[idx] || 0;
+    return data.senior.low[idx] || 0;
+  }
+  return 0;
 }
 
 function App() {
@@ -71,18 +76,15 @@ function App() {
   const t = translations[lang];
 
   const [dogName, setDogName] = useState('');
-  const [weight, setWeight] = useState('');
-  const [age, setAge] = useState('');
+  const [weightRange, setWeightRange] = useState('');
+  const [ageGroup, setAgeGroup] = useState('');
   const [activity, setActivity] = useState('medium');
   const [overweight, setOverweight] = useState(false);
   const [touched, setTouched] = useState(false);
 
   const daily = useMemo(() => {
-    const w = parseFloat(weight);
-    const a = parseInt(age);
-    if (isNaN(w) || isNaN(a)) return 0;
-    return Math.round(calculateRacion(w, a, activity, overweight));
-  }, [weight, age, activity, overweight]);
+    return getDailyRation(ageGroup, weightRange, activity, overweight);
+  }, [ageGroup, weightRange, activity, overweight]);
 
   const weekly = daily * 7;
   const packSize = 510;
@@ -90,12 +92,15 @@ function App() {
   const packsPerWeek = daily > 0 ? Math.ceil(weekly / packSize) : 0;
 
   const whatsappText = () => {
-    return lang == 'en' ? `Hi! Mi dog ${dogName}  weights ${weight} lbs, he is ${age} month old, and he needs ${daily}g of Beloov food per day.` : `¡Hola! Mi perro ${dogName} pesa ${weight} lbs, tiene ${age} meses, y necesita ${daily}g de comida Beloov al día.`;
-  }
-  const handleInput = (setter) => (e) => {
-    setter(e.target.value);
-    setTouched(true);
+    return lang === 'en'
+      ? `Hi! My dog ${dogName} is ${ageGroup} old, weighs ${weightRange} lbs, and needs ${daily}g of Beloov food per day.`
+      : `¡Hola! Mi perro ${dogName} tiene ${ageGroup} de edad, pesa ${weightRange} lbs y necesita ${daily}g de comida Beloov al día.`;
   };
+  const handleInput = (setter) => (e) => { setter(e.target.value); setTouched(true); };
+  const ageMeta = data.ageCategories.find(a => a.id === ageGroup);
+  const isPuppy = ageMeta?.type === 'puppy';
+  const isAdult = ageMeta?.type === 'adult';
+  const isSenior = ageMeta?.type === 'senior';
 
   return (
     <div className="app-container">
@@ -117,46 +122,43 @@ function App() {
           onChange={handleInput(setDogName)}
           placeholder={t.dogName}
         />
-        <label htmlFor="weight">{t.weight} *</label>
-        <input
-          id="weight"
-          type="number"
-          min="1"
-          value={weight}
-          onChange={handleInput(setWeight)}
-          placeholder={t.weight}
-        />
-        <label htmlFor="age">{t.age} *</label>
-        <input
-          id="age"
-          type="number"
-          min="1"
-          value={age}
-          onChange={handleInput(setAge)}
-          placeholder={t.age}
-        />
+        <label htmlFor="ageGroup">{t.ageRange} *</label>
+        <select id="ageGroup" value={ageGroup} onChange={e => { setAgeGroup(e.target.value); setTouched(true); setActivity('medium'); setOverweight(false); }}>
+          <option value="">--</option>
+          {data.ageCategories.map(cat => (
+            <option key={cat.id} value={cat.id}>{cat.label[lang]}</option>
+          ))}
+        </select>
+        <label htmlFor="weightRange">{t.weightRange} *</label>
+        <select id="weightRange" value={weightRange} onChange={e => { setWeightRange(e.target.value); setTouched(true); }} disabled={!ageGroup}>
+          <option value="">--</option>
+            {data.weightRanges.map(r => {
+              const label = formatWeightRange(r);
+              return <option key={label} value={label}>{label}</option>;
+            })}
+        </select>
         <label htmlFor="activity">{t.activity}</label>
         <select
           id="activity"
           value={activity}
           onChange={e => setActivity(e.target.value)}
-          disabled={overweight || (parseInt(age) < 12)}
+          disabled={overweight || isPuppy || !ageGroup}
         >
           <option value="low">{t.low}</option>
           <option value="medium">{t.medium}</option>
-          { parseInt(age) < 85 && <option value="high">{t.high}</option>}
+          { (isAdult && !overweight) && <option value="high">{t.high}</option> }
         </select>
         <label>
           <input
             type="checkbox"
-            checked={overweight}
-            onChange={e => setOverweight(e.target.checked)}
-            disabled={parseInt(age) < 12}
+            checked={overweight && isAdult}
+            onChange={e => { const v = e.target.checked; setOverweight(v); if (v && activity === 'high') setActivity('medium'); }}
+            disabled={!isAdult}
           />
           {t.overweight}
         </label>
         <div className="results">
-          {(!weight || !age) && touched ? (
+          {(!weightRange || !ageGroup) && touched ? (
             <span style={{ color: 'red' }}>{t.inputError}</span>
           ) : daily > 0 ? (
             <>
