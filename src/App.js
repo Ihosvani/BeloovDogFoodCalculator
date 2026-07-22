@@ -72,7 +72,7 @@ function getDailyRation(ageGroup, weightRangeLabel, activity, overweight) {
 }
 
 function App() {
-  const [lang, setLang] = useState('es');
+  const [lang, setLang] = useState('en');
   const t = translations[lang];
 
   const [dogName, setDogName] = useState('');
