@@ -20,12 +20,6 @@ const translations = {
     whatsapp: 'Send via WhatsApp',
     language: 'Español',
     required: 'Required',
-    summary: 'Feeding summary',
-    genericSummary: 'The ideal weekly portion for your dog is',
-    personalSummary: 's ideal weekly portion is',
-    coverText: 'We recommend getting',
-    coverTail: 'which will cover their meals for the entire week.',
-    wholeWeekTail: 'which will last the whole week.',
     note: 'Indicative result. Adjust according to activity and body condition.'
   },
   es: {
@@ -45,12 +39,6 @@ const translations = {
     whatsapp: 'Enviar por WhatsApp',
     language: 'English',
     required: 'Requerido',
-    summary: 'Resumen de alimentación',
-    genericSummary: 'La porción semanal ideal para tu perro es',
-    personalSummary: 'la porción semanal ideal de',
-    coverText: 'Recomendamos comprar',
-    coverTail: 'lo que cubrirá sus comidas para toda la semana.',
-    wholeWeekTail: 'lo que durará toda la semana.',
     note: 'Resultado indicativo. Ajuste según la actividad y la condición corporal.'
   }
 };
@@ -82,15 +70,6 @@ function calculateRation(stageKey, weightLb, activity) {
   return Math.round(weightKg * factor);
 }
 
-function calculateBags(gramsPerDay) {
-  const weekly = gramsPerDay * 7;
-  return {
-    weekly,
-    bags250: Math.ceil(weekly / 250),
-    bags510: Math.ceil(weekly / 510)
-  };
-}
-
 function App() {
   const [lang, setLang] = useState('en');
   const t = translations[lang];
@@ -107,8 +86,6 @@ function App() {
   const daily = useMemo(() => {
     return calculateRation(ageGroup, weight, activity);
   }, [ageGroup, weight, activity]);
-
-  const bags = useMemo(() => (daily === null ? null : calculateBags(daily)), [daily]);
   const weekly = daily === null ? 0 : daily * 7;
   const packSize = 510;
   const packDays = daily > 0 ? (packSize / daily) : 0;
@@ -131,24 +108,6 @@ function App() {
 
   function showEmpty() {
     return daily === null;
-  }
-
-  function buildSummaryText() {
-    if (!bags) return null;
-
-    if (lang === 'en') {
-      if (dogName.trim()) {
-        return `${dogName.trim()}'s ideal weekly portion is ${bags.weekly} grams. We recommend getting ${bags.bags250} of the 250 g bags or ${bags.bags510} of the 510 g bags, which will cover their meals for the entire week.`;
-      }
-
-      return `The ideal weekly portion for your dog is ${bags.weekly} grams. We recommend getting ${bags.bags250} of the 250 g bags or ${bags.bags510} of the 510 g bags, which will last the whole week.`;
-    }
-
-    if (dogName.trim()) {
-      return `La porción semanal ideal de ${dogName.trim()} es ${bags.weekly} gramos. Recomendamos comprar ${bags.bags250} paquetes de 250 g o ${bags.bags510} paquetes de 510 g, lo que cubrirá sus comidas para toda la semana.`;
-    }
-
-    return `La porción semanal ideal para tu perro es ${bags.weekly} gramos. Recomendamos comprar ${bags.bags250} paquetes de 250 g o ${bags.bags510} paquetes de 510 g, lo que durará toda la semana.`;
   }
 
   return (
@@ -202,18 +161,12 @@ function App() {
               <div><b>{t.weekly}:</b> {weekly} {t.grams}</div>
               <div><b>{t.packDays}:</b> {packDays.toFixed(1)}</div>
               <div><b>{t.packsPerWeek}:</b> {packsPerWeek}</div>
-              {bags ? (
-                <>
-                  <div><b>{t.summary}:</b> {daily} {t.grams} · {bags.weekly} {t.grams}/{lang === 'en' ? 'week' : 'semana'}</div>
-                  <div>{buildSummaryText()}</div>
-                </>
-              ) : null}
             </>
           ) : null}
         </div>
         <a
           className="whatsapp-btn"
-          href={`https://wa.me/19548539090?text=${encodeURIComponent(whatsappText())}`}
+          href={`https://wa.me/9546614091?text=${encodeURIComponent(whatsappText())}`}
           target="_blank"
           rel="noopener noreferrer"
         >
