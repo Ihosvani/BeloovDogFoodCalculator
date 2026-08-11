@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import data from './rations.json';
 import './App.css';
 
+// Localized copy for the visible labels and result text.
 const translations = {
   en: {
     title: 'Feeding Calculator',
@@ -43,16 +44,19 @@ const translations = {
   }
 };
 
+// Convert the lbs input into the kg-based lookup model used by the ration data.
 const lbPerKg = 2.2046226218;
 
 function poundsToKg(weightLb) {
   return Number(weightLb) / lbPerKg;
 }
 
+// Resolve the configured feeding stage for the selected age group.
 function getStage(stageKey) {
   return data.stages[stageKey] ? data.stages[stageKey] : null;
 }
 
+// Pick the correct factor for the current stage and activity level.
 function getFactor(stageKey, activity) {
   const stage = getStage(stageKey);
   if (!stage) return null;
@@ -62,6 +66,7 @@ function getFactor(stageKey, activity) {
     : null;
 }
 
+// Compute the daily ration in grams, rejecting unsupported ranges early.
 function calculateRation(stageKey, weightLb, activity) {
   const factor = getFactor(stageKey, activity || 'avg');
   const weightKg = poundsToKg(weightLb);
@@ -71,6 +76,7 @@ function calculateRation(stageKey, weightLb, activity) {
 }
 
 function App() {
+  // Keep the interface bilingual while the calculation model stays shared.
   const [lang, setLang] = useState('en');
   const t = translations[lang];
 
@@ -83,6 +89,7 @@ function App() {
   const activityOptions = stage && Array.isArray(stage.activity) ? stage.activity : [];
   const showActivity = activityOptions.length > 0;
 
+  // Recompute the ration whenever the inputs change.
   const daily = useMemo(() => {
     return calculateRation(ageGroup, weight, activity);
   }, [ageGroup, weight, activity]);
@@ -101,6 +108,7 @@ function App() {
     const nextAge = event.target.value;
     setAgeGroup(nextAge);
     const nextStage = getStage(nextAge);
+    // Reset to the default activity when the stage exposes activity choices.
     if (nextStage && Array.isArray(nextStage.activity)) {
       setActivity('avg');
     }

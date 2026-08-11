@@ -1,4 +1,4 @@
-// This optional code is used to register a service worker.
+// Optional service worker registration helpers for the PWA build.
 // register() is not called by default.
 
 // This lets the app load faster on subsequent visits in production, and gives
