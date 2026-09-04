@@ -174,7 +174,7 @@ function App() {
         </div>
         <a
           className="whatsapp-btn"
-          href={`https://wa.me/9546614091?text=${encodeURIComponent(whatsappText())}`}
+          href={`https://wa.me/+19546614091?text=${encodeURIComponent(whatsappText())}`}
           target="_blank"
           rel="noopener noreferrer"
         >
