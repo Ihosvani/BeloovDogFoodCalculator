@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/BeloovDogFoodCalculator/static/css/main.0c551ff7.css",
-    "main.js": "/BeloovDogFoodCalculator/static/js/main.142afd32.js",
+    "main.js": "/BeloovDogFoodCalculator/static/js/main.1f0d108a.js",
     "static/js/584.6cee9a44.chunk.js": "/BeloovDogFoodCalculator/static/js/584.6cee9a44.chunk.js",
     "service-worker.js": "/BeloovDogFoodCalculator/service-worker.js",
     "index.html": "/BeloovDogFoodCalculator/index.html",
     "main.0c551ff7.css.map": "/BeloovDogFoodCalculator/static/css/main.0c551ff7.css.map",
-    "main.142afd32.js.map": "/BeloovDogFoodCalculator/static/js/main.142afd32.js.map",
+    "main.1f0d108a.js.map": "/BeloovDogFoodCalculator/static/js/main.1f0d108a.js.map",
     "584.6cee9a44.chunk.js.map": "/BeloovDogFoodCalculator/static/js/584.6cee9a44.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.0c551ff7.css",
-    "static/js/main.142afd32.js"
+    "static/js/main.1f0d108a.js"
   ]
 }
